@@ -9,12 +9,14 @@ import {
   ChevronRight,
   Shield, 
   GraduationCap, 
-  Briefcase 
+  Briefcase,
+  Mail 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Register = () => {
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('STUDENT');
   const [error, setError] = useState('');
@@ -28,7 +30,7 @@ const Register = () => {
     setError('');
     setLoading(true);
 
-    const result = await register(username, password, role);
+    const result = await register(username, email, password, role);
     if (result.success) {
       navigate('/');
     } else {
@@ -115,6 +117,21 @@ const Register = () => {
                     value={username} 
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="Enter unique username"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="field-group">
+                <label>Email Address</label>
+                <div className="input-wrapper">
+                  <Mail size={18} className="field-icon" />
+                  <input 
+                    type="email" 
+                    className="input-field"
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
                     required
                   />
                 </div>

@@ -28,9 +28,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (username, password, role) => {
+  const register = async (username, email, password, role) => {
     try {
-      await authAPI.register({ username, password, role });
+      await authAPI.register({ username, email, password, role });
       // Optionally auto-login after register, or just return success
       return await login(username, password);
     } catch (error) {
