@@ -54,9 +54,75 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-            user.setRole("STUDENT"); // Default role
+    public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
+            return ResponseEntity.badRequest().body("Error: Username is already taken!");
         }
-        User savedUser = userService.createUser(user);
-        return ResponseEntity.ok(savedUser);
+        if (userRepository.existsByEmail(user.getEmail())) {
+            return ResponseEntity.badRequest().body("Error: Email is already in use!");
+        }
+
+        userService.saveUser(user);
+        return ResponseEntity.ok("User registered successfully!");
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.badRequest().body("Error: Email not found!");
+        }
+
+        User user = userOptional.get();
+        String otp = String.format("%06d", new Random().nextInt(999999));
+        user.setResetOtp(otp);
+        user.setResetOtpExpiry(LocalDateTime.now().plusMinutes(10));
+        userRepository.save(user);
+
+        emailService.sendOtpEmail(user.getEmail(), otp);
+        return ResponseEntity.ok("OTP sent to your email!");
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<?> verifyOtp(@Valid @RequestBody VerifyOtpRequest request) {
+        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.badRequest().body("Error: Email not found!");
+        }
+
+        User user = userOptional.get();
+        if (user.getResetOtp() == null || !user.getResetOtp().equals(request.getOtp())) {
+            return ResponseEntity.badRequest().body("Error: Invalid OTP!");
+        }
+
+        if (user.getResetOtpExpiry().isBefore(LocalDateTime.now())) {
+            return ResponseEntity.badRequest().body("Error: OTP has expired!");
+        }
+
+        return ResponseEntity.ok("OTP verified successfully!");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.badRequest().body("Error: Email not found!");
+        }
+
+        User user = userOptional.get();
+        if (user.getResetOtp() == null || !user.getResetOtp().equals(request.getOtp())) {
+            return ResponseEntity.badRequest().body("Error: Invalid OTP!");
+        }
+
+        if (user.getResetOtpExpiry().isBefore(LocalDateTime.now())) {
+            return ResponseEntity.badRequest().body("Error: OTP has expired!");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setResetOtp(null);
+        user.setResetOtpExpiry(null);
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Password reset successfully!");
     }
 }
