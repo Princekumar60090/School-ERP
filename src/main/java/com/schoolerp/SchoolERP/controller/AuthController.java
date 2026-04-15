@@ -58,7 +58,7 @@ public class AuthController {
         if (userRepository.existsByUsername(user.getUsername())) {
             return ResponseEntity.badRequest().body("Error: Username is already taken!");
         }
-        if (userRepository.existsByEmail(user.getEmail())) {
+        if (userRepository.existsByEmailIgnoreCase(user.getEmail())) {
             return ResponseEntity.badRequest().body("Error: Email is already in use!");
         }
 
@@ -68,7 +68,7 @@ public class AuthController {
 
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
-        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+        Optional<User> userOptional = userRepository.findByEmailIgnoreCase(request.getEmail());
         if (userOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("Error: Email not found!");
         }
@@ -85,7 +85,7 @@ public class AuthController {
 
     @PostMapping("/verify-otp")
     public ResponseEntity<?> verifyOtp(@Valid @RequestBody VerifyOtpRequest request) {
-        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+        Optional<User> userOptional = userRepository.findByEmailIgnoreCase(request.getEmail());
         if (userOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("Error: Email not found!");
         }
@@ -104,7 +104,7 @@ public class AuthController {
 
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
-        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+        Optional<User> userOptional = userRepository.findByEmailIgnoreCase(request.getEmail());
         if (userOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("Error: Email not found!");
         }
