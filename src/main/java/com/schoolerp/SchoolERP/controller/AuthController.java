@@ -62,7 +62,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Error: Email is already in use!");
         }
 
-        userService.saveUser(user);
+        userService.createUser(user);
         return ResponseEntity.ok("User registered successfully!");
     }
 
