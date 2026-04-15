@@ -1,0 +1,12 @@
+target/
+frontend/
+.git/
+.env
+*.log
+.mvn/
+mvnw
+mvnw.cmd
+HELP.md
+Dockerfile
+.gitignore
+.idea/
