@@ -26,5 +26,11 @@ public class User {
     @NotBlank(message = "Role is required")
     private String role;
 
-    private Boolean active = true;  // <-- IMPORTANT: use Boolean not boolean
+    @NotBlank(message = "Email is required")
+    private String email;
+
+    private String resetOtp;
+    private java.time.LocalDateTime resetOtpExpiry;
+
+    private Boolean active = true;
 }

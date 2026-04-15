@@ -107,7 +107,10 @@ const Login = () => {
           </form>
 
           <footer className="auth-footer">
-            <p>Don't have an account? <Link to="/register" className="login-link">Sign up now</Link></p>
+            <div className="login-footer">
+              <p><Link to="/forgot-password" style={{ color: 'var(--text-muted)' }}>Forgot password?</Link></p>
+              <p>Don't have an account? <Link to="/register" className="login-link">Sign up now</Link></p>
+            </div>
           </footer>
         </div>
       </motion.div>
