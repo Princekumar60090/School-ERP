@@ -50,7 +50,7 @@ public class AuthController {
         String jwt = jwtUtils.generateJwtToken(authentication);
         User user = userRepository.findByUsername(loginRequest.getUsername()).get();
 
-        return ResponseEntity.ok(new JwtResponse(jwt, user.getUsername(), user.getRole()));
+        return ResponseEntity.ok(new JwtResponse(jwt, user.getUsername(), java.util.List.of(user.getRole())));
     }
 
     @PostMapping("/register")
