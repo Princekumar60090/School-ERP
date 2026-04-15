@@ -2,6 +2,7 @@ package com.schoolerp.SchoolERP.controller;
 
 import com.schoolerp.SchoolERP.entity.Student;
 import com.schoolerp.SchoolERP.service.StudentService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.apache.coyote.Response;
 import org.bson.types.ObjectId;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/students")
+@SecurityRequirement(name = "basicAuth")
 public class StudentController {
 
     @Autowired

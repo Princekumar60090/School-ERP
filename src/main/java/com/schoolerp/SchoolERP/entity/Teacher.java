@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.annotation.Collation;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
@@ -19,7 +18,7 @@ public class Teacher {
     @Id
     private ObjectId id;
 
-    @NotBlank(message = " Teacher name cannot be empty")
+    @NotBlank(message = "Teacher name cannot be empty")
     private String name;
 
     @NotBlank(message = "subject cannot be empty")
@@ -27,7 +26,7 @@ public class Teacher {
 
     @NotBlank(message = "phone cannot be empty")
     @Size(min=10,max=10)
-    @Pattern(regexp = "^\\d{10}$", message = "Phone number must contain only digits") // ADDED PATTERN
+    @Pattern(regexp = "^\\d{10}$", message = "Phone number must contain only digits")
     private String phone;
 
     @NotBlank(message = "email cannot be empty")
@@ -41,4 +40,9 @@ public class Teacher {
     @PastOrPresent(message = "Date of joining cannot be in the future")
     private LocalDate dateOfJoining;
 
+    /**
+     * NEW: link to User (login account). Nullable.
+     * Stores the ObjectId of the corresponding User document.
+     */
+    private ObjectId userId;
 }

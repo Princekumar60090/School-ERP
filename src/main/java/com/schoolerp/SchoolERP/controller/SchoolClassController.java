@@ -3,6 +3,7 @@ package com.schoolerp.SchoolERP.controller;
 import com.schoolerp.SchoolERP.entity.SchoolClass;
 import com.schoolerp.SchoolERP.entity.Teacher;
 import com.schoolerp.SchoolERP.service.SchoolClassService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/classes")
+@SecurityRequirement(name = "basicAuth")
 public class SchoolClassController {
     @Autowired
     private SchoolClassService schoolClassService;

@@ -42,4 +42,7 @@ public class Staff {
     @NotNull(message = "Date of joining cannot be null")
     @PastOrPresent(message = "Date of joining cannot be in the future")
     private LocalDate dateOfJoining;
+
+    private ObjectId userId;
+
 }

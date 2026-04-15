@@ -3,6 +3,7 @@ package com.schoolerp.SchoolERP.controller;
 import com.fasterxml.classmate.members.ResolvedParameterizedMember;
 import com.schoolerp.SchoolERP.entity.Subject;
 import com.schoolerp.SchoolERP.service.SubjectService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/subjects")
+@SecurityRequirement(name = "basicAuth")
 public class SubjectController {
 
     @Autowired

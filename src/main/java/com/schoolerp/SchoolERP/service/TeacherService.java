@@ -15,44 +15,53 @@ public class TeacherService {
     @Autowired
     private TeacherRepository teacherRepository;
 
-    public Teacher saveTeacher(Teacher teacher){
+    // Save new teacher
+    public Teacher saveTeacher(Teacher teacher) {
         return teacherRepository.save(teacher);
     }
 
-    public List<Teacher> getAllTeachers(){
-         return teacherRepository.findAll();
+    // Get all
+    public List<Teacher> getAllTeachers() {
+        return teacherRepository.findAll();
     }
 
-    public Teacher updateTeacher(ObjectId id, Teacher newTeacherDetails) {
-        // Find the teacher by their ID
-        Optional<Teacher> teacherOptional = teacherRepository.findById(id);
-
-        // Check if the teacher exists
-        if (teacherOptional.isPresent()) {
-            // Get the existing teacher object
-            Teacher existingTeacher = teacherOptional.get();
-
-            // Update the fields with the new details
-            existingTeacher.setName(newTeacherDetails.getName());
-            existingTeacher.setSubject(newTeacherDetails.getSubject());
-            existingTeacher.setPhone(newTeacherDetails.getPhone());
-            existingTeacher.setEmail(newTeacherDetails.getEmail());
-            existingTeacher.setSalary(newTeacherDetails.getSalary());
-            existingTeacher.setDateOfJoining(newTeacherDetails.getDateOfJoining());
-
-            // Save the updated teacher and return it
-            return teacherRepository.save(existingTeacher);
-        } else {
-            // If the teacher is not found, return null
-            return null;
-        }
-    }
-
-    public Optional<Teacher> getTeacherById(ObjectId id){
+    // Get by id
+    public Optional<Teacher> getTeacherById(ObjectId id) {
         return teacherRepository.findById(id);
     }
 
-    public void deleteTeacherById(ObjectId id){
+    // Update (partial simple)
+    public Teacher updateTeacher(ObjectId id, Teacher details) {
+        Teacher t = teacherRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Teacher not found"));
+
+        if (details.getName() != null) t.setName(details.getName());
+        if (details.getSubject() != null) t.setSubject(details.getSubject());
+        if (details.getPhone() != null) t.setPhone(details.getPhone());
+        if (details.getEmail() != null) t.setEmail(details.getEmail());
+        if (details.getSalary() > 0) t.setSalary(details.getSalary());
+        if (details.getDateOfJoining() != null) t.setDateOfJoining(details.getDateOfJoining());
+        // allow setting userId via update body if provided
+        if (details.getUserId() != null) t.setUserId(details.getUserId());
+
+        return teacherRepository.save(t);
+    }
+
+    // Delete
+    public void deleteTeacherById(ObjectId id) {
         teacherRepository.deleteById(id);
+    }
+
+    // Link existing user id to teacher (explicit API)
+    public Teacher linkUserToTeacher(ObjectId teacherId, ObjectId userId) {
+        Teacher t = teacherRepository.findById(teacherId)
+                .orElseThrow(() -> new RuntimeException("Teacher not found"));
+        t.setUserId(userId);
+        return teacherRepository.save(t);
+    }
+
+    // Get teachers by subject / optional helper
+    public List<Teacher> findBySubject(String subject) {
+        return teacherRepository.findBySubject(subject);
     }
 }

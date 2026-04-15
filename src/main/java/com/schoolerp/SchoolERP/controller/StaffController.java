@@ -1,6 +1,7 @@
 package com.schoolerp.SchoolERP.controller;
 
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.dao.DuplicateKeyException;
 import com.schoolerp.SchoolERP.entity.Staff;
 import com.schoolerp.SchoolERP.service.StaffService;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/staffs")
+@SecurityRequirement(name = "basicAuth")
 public class StaffController {
 
     @Autowired

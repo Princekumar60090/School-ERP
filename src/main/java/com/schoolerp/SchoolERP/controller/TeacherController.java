@@ -1,10 +1,8 @@
 package com.schoolerp.SchoolERP.controller;
 
-import com.schoolerp.SchoolERP.entity.Student;
 import com.schoolerp.SchoolERP.entity.Teacher;
-import com.schoolerp.SchoolERP.service.StudentService;
 import com.schoolerp.SchoolERP.service.TeacherService;
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,54 +10,57 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/teachers")
+@SecurityRequirement(name = "basicAuth")
 public class TeacherController {
 
     @Autowired
     private TeacherService teacherService;
 
-
+    // Create teacher (admin or authenticated)
     @PostMapping
-    public ResponseEntity<Teacher> saveTeacher(@Valid @RequestBody Teacher teacher){
-        teacherService.saveTeacher(teacher);
-        return new ResponseEntity<>(teacher, HttpStatus.CREATED);
+    public ResponseEntity<Teacher> createTeacher(@RequestBody Teacher teacher) {
+        Teacher saved = teacherService.saveTeacher(teacher);
+        return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
+    // Get all
     @GetMapping
-    public List<Teacher> getAllTeachers(){
-        return teacherService.getAllTeachers();
+    public ResponseEntity<List<Teacher>> getAll() {
+        return ResponseEntity.ok(teacherService.getAllTeachers());
     }
 
+    // Get one
     @GetMapping("/{id}")
-    public ResponseEntity<Teacher> getTeacher(@PathVariable ObjectId id){
-        Optional<Teacher> teacher= teacherService.getTeacherById(id);
-        if(teacher.isPresent()){
-            return new ResponseEntity<>(teacher.get(), HttpStatus.OK);
-        }
-        else{
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Teacher> getOne(@PathVariable String id) {
+        return teacherService.getTeacherById(new ObjectId(id))
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-
+    // Update
     @PutMapping("/{id}")
-    public ResponseEntity<Teacher> updateTeacher(@Valid @RequestBody Teacher teacher, @PathVariable ObjectId id){
-        Teacher updatedTeacher  = teacherService.updateTeacher(id,teacher);
-        if(updatedTeacher!=null){
-            return new ResponseEntity<>(updatedTeacher, HttpStatus.OK);
-        }
-        else{
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Teacher> update(@PathVariable String id, @RequestBody Teacher details) {
+        Teacher updated = teacherService.updateTeacher(new ObjectId(id), details);
+        return ResponseEntity.ok(updated);
     }
 
-
+    // Delete
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteTeacher(@PathVariable ObjectId id){
-        teacherService.deleteTeacherById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<String> delete(@PathVariable String id) {
+        teacherService.deleteTeacherById(new ObjectId(id));
+        return ResponseEntity.ok("Deleted");
+    }
+
+    // NEW: Link an existing user to this teacher
+    @PutMapping("/{teacherId}/link-user/{userId}")
+    public ResponseEntity<Teacher> linkUser(
+            @PathVariable String teacherId,
+            @PathVariable String userId) {
+
+        Teacher result = teacherService.linkUserToTeacher(new ObjectId(teacherId), new ObjectId(userId));
+        return ResponseEntity.ok(result);
     }
 }

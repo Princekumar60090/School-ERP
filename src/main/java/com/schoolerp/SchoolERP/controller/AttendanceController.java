@@ -2,6 +2,7 @@ package com.schoolerp.SchoolERP.controller;
 
 import com.schoolerp.SchoolERP.entity.AttendanceRecord;
 import com.schoolerp.SchoolERP.service.AttendanceService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/attendance")
+@SecurityRequirement(name = "basicAuth")
 public class AttendanceController {
     @Autowired
     private AttendanceService attendanceService;
@@ -24,15 +26,15 @@ public class AttendanceController {
         try {
             // Service method ko call karein
             AttendanceRecord savedRecord = attendanceService.markAttendance(attendanceRecord);
-            return new ResponseEntity<>(savedRecord, HttpStatus.CREATED); // Safal hone par 201 Created
+            return new ResponseEntity<>(savedRecord, HttpStatus.CREATED);
 
         } catch (IllegalStateException e) {
             // Agar attendance pehle se mark hai (duplicate)
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT); // 409 Conflict
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
 
         } catch (IllegalArgumentException e) {
             // Agar personId, personType ya status invalid hai
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST); // 400 Bad Request
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 
         } catch (Exception e) {
             // Koi aur unexpected error

@@ -32,4 +32,10 @@ public class Student {
     @Size(min = 10, max = 10, message = "Phone number must be exactly 10 digits")
     @Pattern(regexp = "^\\d{10}$", message = "Phone number must contain only digits")
     private String phone;
+
+    @Email(message = "please provide a valid email")
+    private String email;
+
+    private ObjectId userId;
+
 }
